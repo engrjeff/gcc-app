@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
+const advancedResults = require("../middlewares/advancedResults");
+
+const CellMember = require("../models/CellMember");
+
+const populate = {
+  path: "leader",
+  select: "name",
+};
 
 const {
   getAllCellMembers,
@@ -11,8 +19,13 @@ const {
   test,
 } = require("../controllers/cellMemberController");
 
-router.route("/").get(getAllCellMembers).post(auth, createCellMember);
-router.route("/me").get(auth, getCellMembers);
+router
+  .route("/")
+  .get(advancedResults(CellMember, populate), getAllCellMembers)
+  .post(auth, createCellMember);
+router
+  .route("/me")
+  .get(auth, advancedResults(CellMember, populate), getCellMembers);
 router.route("/:id").put(auth, updateCellMember).delete(auth, deleteCellMember);
 
 // test

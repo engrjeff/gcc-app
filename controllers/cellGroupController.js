@@ -8,7 +8,15 @@ const CellMember = require("../models/CellMember");
 // @access    Private
 const createCellGroup = asyncHandler(async (req, res, next) => {
   req.body.leader = req.user.id;
-  const cellgroup = await CellGroup.create(req.body);
+  let cellgroup = await CellGroup.findOne({
+    leader: req.user.id,
+    title: req.body.title,
+  });
+  if (cellgroup)
+    return next(
+      new HttpError(400, "Cell groups with the same title cannot co-exist.")
+    );
+  cellgroup = await CellGroup.create(req.body);
   res.status(201).json({
     status: "success",
     data: cellgroup,
@@ -16,23 +24,17 @@ const createCellGroup = asyncHandler(async (req, res, next) => {
 });
 
 // @route     GET /api/v1/cellgroup/
+// @desc      Gets all cell groups
+// @access    Public
+const getAllCellGroups = asyncHandler(async (req, res, next) => {
+  res.status(200).json(res.advancedResults);
+});
+
+// @route     GET /api/v1/cellgroup/me
 // @desc      Gets all cell groups of current user
 // @access    Private
 const getCellGroups = asyncHandler(async (req, res, next) => {
-  const cellgroups = await CellGroup.find({ leader: req.user.id })
-    .populate({
-      path: "members",
-    })
-    .populate({
-      path: "leader",
-      select: "name",
-    });
-
-  res.status(200).json({
-    status: "success",
-    count: cellgroups.length,
-    data: cellgroups,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @route     GET /api/v1/cellgroup/:id
@@ -160,6 +162,7 @@ const deleteCellMember = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
+  getAllCellGroups,
   getCellGroups,
   getCellGroup,
   createCellGroup,

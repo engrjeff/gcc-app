@@ -15,7 +15,6 @@ const CellGroupSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    unique: true,
     required: [true, "Title is required"],
   },
   type: {

@@ -1,20 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
+const advancedResults = require("../middlewares/advancedResults");
+
+const CellGroup = require("../models/CellGroup");
+
 const {
   createCellGroup,
   updateCellGroup,
   deleteCellGroup,
   getCellGroup,
   getCellGroups,
+  getAllCellGroups,
 
   addCellMember,
   deleteCellMember,
 } = require("../controllers/cellGroupController");
 
-router.route("/me").get(auth, getCellGroups);
+const populateWithLeader = {
+  path: "leader",
+  select: "name",
+};
 
-router.route("/").post(auth, createCellGroup);
+router.route("/me").get(auth, advancedResults(CellGroup), getCellGroups);
+
+router
+  .route("/")
+  .get(advancedResults(CellGroup, populateWithLeader), getAllCellGroups)
+  .post(auth, createCellGroup);
 
 router
   .route("/:id")

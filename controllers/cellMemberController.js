@@ -2,7 +2,7 @@ const asyncHandler = require("../middlewares/async");
 const HttpError = require("../models/HttpError");
 const CellMember = require("../models/CellMember");
 
-// test
+// test for birthday
 const test = asyncHandler(async (req, res, next) => {
   // with birthdays on specified month / current month
   // const result = await CellMember.aggregate([
@@ -43,70 +43,14 @@ const test = asyncHandler(async (req, res, next) => {
 // @desc      Get all cell members
 // @access    Public
 const getAllCellMembers = asyncHandler(async (req, res, next) => {
-  const reqQuery = { ...req.query };
-  console.log(req.query);
-  const excludedFields = ["sortBy", "page", "limit"];
-
-  excludedFields.forEach((field) => delete reqQuery[field]);
-
-  // FILTERING (cellStatus, churchStatus, gender, birthdate ?)
-  let query = CellMember.find(reqQuery).populate("leader", "name");
-
-  // SORTING
-  if (req.query.sortBy) {
-    const sortBy = req.query.sortBy.split(",").join(" ");
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort("name");
-  }
-
-  // PAGINATION
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 20;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const total = await CellMember.countDocuments();
-
-  query = query.skip(startIndex).limit(limit);
-
-  const cellMembers = await query;
-
-  // PAGINATION RESULT
-  const pagination = {};
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit,
-    };
-  }
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit,
-    };
-  }
-
-  res.status(200).json({
-    status: "success",
-    count: cellMembers.length,
-    pagination,
-    data: cellMembers,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @route     GET /api/v1/cellmember/me
 // @desc      Get the cell members of current user
 // @access    Private
 const getCellMembers = asyncHandler(async (req, res, next) => {
-  const cellMembers = await CellMember.find({ leader: req.user.id }).populate(
-    "leader",
-    "name"
-  );
-  res.status(200).json({
-    status: "success",
-    count: cellMembers.length,
-    data: cellMembers,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @route     POST /api/v1/cellmember/
