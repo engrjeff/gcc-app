@@ -1,0 +1,34 @@
+DONE: 
+
+Auth :
+  Register
+  Login
+
+User :
+  Get All Users
+  Get cell members for User
+  Get specific cell member for User
+  Get cell groups for User
+  Get specific cell group for User
+
+Profile :
+  Get current user's Profile
+  Create/Update Profile
+  Delete Profile
+  Get user's Profile
+
+Cell member:
+  Get all cell members
+  Get cell members for current user
+  Create cell member
+  Update Cell member
+  Delete cell member
+
+Cell Group:
+  Get cell groups for current user
+  Create cell group
+  Get cell group by id
+  Update cell group
+  Delete cell group
+  Add member to cell group
+  Delete member of cell group
