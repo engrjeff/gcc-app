@@ -1,36 +1,38 @@
 import {
-  CELL_GROUPS_REQUESTED,
-  CELL_GROUP_ERROR,
-  GET_CELL_GROUPS_SUCCESS,
+  PROFILE_REQUESTED,
+  GET_PROFILE_SUCCESS,
+  SAVE_PROFILE_SUCCESS,
+  PROFILE_ERROR,
 } from "../types";
 
 const initialState = {
   loading: false,
-  cellgroups: {},
-  userCellgroups: {},
-  error: {},
+  profile: null,
+  error: null,
 };
 
-const cellGroupReducer = (state = initialState, action) => {
+const profileReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case CELL_GROUPS_REQUESTED:
+    case PROFILE_REQUESTED:
       return {
         ...state,
         loading: true,
       };
-    case GET_CELL_GROUPS_SUCCESS:
+    case GET_PROFILE_SUCCESS:
+    case SAVE_PROFILE_SUCCESS:
       return {
         ...state,
         loading: false,
-        cellgroups: { ...payload },
+        profile: payload,
         error: null,
       };
-    case CELL_GROUP_ERROR:
+    case PROFILE_ERROR:
       return {
         ...state,
         loading: false,
+        profile: null,
         error: payload,
       };
     default:
@@ -38,4 +40,4 @@ const cellGroupReducer = (state = initialState, action) => {
   }
 };
 
-export default cellGroupReducer;
+export default profileReducer;

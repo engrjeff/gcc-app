@@ -1,19 +1,19 @@
-import axios from "axios";
-import { GET_CELL_GROUPS_SUCCESS, CELL_GROUP_ERROR } from "../types";
+import {
+  API_CALL_BEGAN,
+  CELL_GROUPS_REQUESTED,
+  GET_CELL_GROUPS_SUCCESS,
+  CELL_GROUP_ERROR,
+} from "../types";
 
 // Get all cell groups
 export const getAllCellGroups = () => async (dispatch) => {
-  try {
-    const { data: cellgroups } = await axios.get("/api/v1/cellgroup");
-
-    dispatch({
-      type: GET_CELL_GROUPS_SUCCESS,
-      payload: cellgroups,
-    });
-  } catch (err) {
-    dispatch({
-      type: CELL_GROUP_ERROR,
-      payload: err.response.data,
-    });
-  }
+  dispatch({
+    type: API_CALL_BEGAN,
+    payload: {
+      url: "/api/v1/cellgroup",
+      onStart: CELL_GROUPS_REQUESTED,
+      onSuccess: GET_CELL_GROUPS_SUCCESS,
+      onError: CELL_GROUP_ERROR,
+    },
+  });
 };

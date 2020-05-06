@@ -1,19 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { connect } from "react-redux";
+import { logout } from "../../state/actions/authActions";
 
-const Sidebar = () => {
+const Sidebar = ({ logout, history }) => {
   return (
     <nav className="sidebar">
       <div className="sidebar__header">
         <span className="fas fa-bars"></span>Menu
       </div>
       <ul className="sidebar__navigation">
-        {/* <li className="sidebar__nav-item">
-          <NavLink to="/home" exact className="sidebar__nav-link">
-            <span className="fas fa-users"></span>
-            <span className="link-text">Disciples</span>
-          </NavLink>
-        </li> */}
         <li className="sidebar__nav-item">
           <NavLink to="/me/dashboard" className="sidebar__nav-link">
             <span className="fas fa-th-large"></span>
@@ -39,14 +35,26 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className="sidebar__nav-item">
-          <NavLink to="/me/logout" className="sidebar__nav-link">
+          <a
+            href="!#"
+            className="sidebar__nav-link"
+            onClick={(e) => {
+              e.preventDefault();
+              logout();
+              history.push("/login");
+            }}
+          >
             <span className="fas fa-sign-out-alt"></span>
             <span className="link-text">Log out</span>
-          </NavLink>
+          </a>
         </li>
       </ul>
     </nav>
   );
 };
 
-export default Sidebar;
+const mapDispatchToProps = {
+  logout,
+};
+
+export default connect(null, mapDispatchToProps)(Sidebar);
