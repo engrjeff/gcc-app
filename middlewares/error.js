@@ -15,7 +15,7 @@ const error = (err, req, res, next) => {
     error = new HttpError(400, message);
   }
   if (error.code === 11000) {
-    const message = "A field that has a duplicate is entered.";
+    const message = "A field that already exists is entered.";
     error = new HttpError(400, message);
   }
   res.status(error.statusCode || 500).json({

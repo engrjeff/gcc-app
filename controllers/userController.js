@@ -8,12 +8,7 @@ const CellGroup = require("../models/CellGroup");
 // @desc      Gets all the users
 // @access    Public
 const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: "success",
-    count: users.length,
-    data: users,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @route     GET /api/v1/user/:userId/cellmembers

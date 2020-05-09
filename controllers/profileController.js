@@ -21,10 +21,9 @@ const getProfile = asyncHandler(async (req, res, next) => {
 // @desc      Get current user's profile
 // @access    Private
 const getCurrentProfile = asyncHandler(async (req, res, next) => {
-  const profile = await Profile.findOne({ user: req.user.id }).populate(
-    "user",
-    "name"
-  );
+  const profile = await Profile.findOne({ user: req.user.id })
+    .populate("user", "name role")
+    .populate("leader", "name");
 
   res.status(200).json({
     status: "success",

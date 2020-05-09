@@ -12,7 +12,7 @@ const register = asyncHandler(async (req, res, next) => {
   // Gen token here
   const token = user.generateToken();
 
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: token,
   });
@@ -30,14 +30,14 @@ const login = asyncHandler(async (req, res, next) => {
   // email lookup
   let user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return next(new HttpError(400, "Invalid credentials."));
+    return next(new HttpError(401, "Invalid credentials."));
   }
 
   // check password
   const isPasswordMatched = await bcrypt.compare(password, user.password);
 
   if (!isPasswordMatched) {
-    return next(new HttpError(400, "Invalid credentials."));
+    return next(new HttpError(401, "Invalid credentials."));
   }
 
   // Gen token here
@@ -49,7 +49,16 @@ const login = asyncHandler(async (req, res, next) => {
   });
 });
 
+const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
 module.exports = {
   register,
   login,
+  getMe,
 };

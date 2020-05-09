@@ -4,6 +4,7 @@ const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   address: {
     type: String,
@@ -13,12 +14,14 @@ const ProfileSchema = new mongoose.Schema({
     type: Date,
     required: [true, "Birthdate is required"],
   },
-  cellLeader: {
-    type: String,
+  leader: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
   type: {
     type: String,
-    enum: ["parent", "young professional", "student"],
+    enum: ["parent", "professional", "student"],
     default: "student",
   },
   gender: {
