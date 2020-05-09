@@ -1,41 +1,40 @@
 import {
-  CELL_GROUPS_REQUESTED,
-  CELL_GROUP_ERROR,
-  GET_CELL_GROUPS_SUCCESS,
-  GET_CURRENT_USER_CELL_GROUPS_SUCCESS,
+  MEMBERS_REQUESTED,
+  MEMBERS_ERROR,
+  GET_MEMBERS_SUCCESS,
+  CREATE_MEMBER_SUCCESS,
+  DELETE_MEMBER_SUCCESS,
 } from "../types";
 
 const initialState = {
   loading: false,
-  cellgroups: {},
-  userCellgroups: {},
-  error: {},
+  members: {},
+  error: null,
 };
 
-const cellGroupReducer = (state = initialState, action) => {
+const cellMemberReducer = (state = initialState, action) => {
   const { type, payload } = action;
-
   switch (type) {
-    case CELL_GROUPS_REQUESTED:
+    case MEMBERS_REQUESTED:
       return {
         ...state,
         loading: true,
       };
-    case GET_CELL_GROUPS_SUCCESS:
+    case GET_MEMBERS_SUCCESS:
       return {
         ...state,
         loading: false,
-        cellgroups: { ...payload },
+        members: { ...payload },
         error: null,
       };
-    case GET_CURRENT_USER_CELL_GROUPS_SUCCESS:
+    case CREATE_MEMBER_SUCCESS:
+    case DELETE_MEMBER_SUCCESS:
       return {
         ...state,
         loading: false,
-        userCellgroups: { ...payload },
         error: null,
       };
-    case CELL_GROUP_ERROR:
+    case MEMBERS_ERROR:
       return {
         ...state,
         loading: false,
@@ -46,4 +45,4 @@ const cellGroupReducer = (state = initialState, action) => {
   }
 };
 
-export default cellGroupReducer;
+export default cellMemberReducer;

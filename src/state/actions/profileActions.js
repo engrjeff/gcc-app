@@ -1,3 +1,4 @@
+import { showAlert } from "../actions/alertActions";
 import {
   API_CALL_BEGAN,
   PROFILE_REQUESTED,
@@ -7,7 +8,7 @@ import {
 } from "../types";
 
 // get current user's profile
-export const getProfile = () => async (dispatch) => {
+export const getProfile = () => (dispatch) => {
   dispatch({
     type: API_CALL_BEGAN,
     payload: {
@@ -20,7 +21,15 @@ export const getProfile = () => async (dispatch) => {
 };
 
 // save (create or update) current user's profile
-export const saveProfile = (profile, history) => async (dispatch) => {
+export const saveProfile = (profile, history, isUpdate) => (dispatch) => {
+  const afterSuccess = () => {
+    const alert = {
+      content: isUpdate ? "Profile updated!" : "Profile created!",
+      type: isUpdate ? "success" : "info",
+    };
+    dispatch(showAlert(alert));
+    // history.push("/me/profile");
+  };
   dispatch({
     type: API_CALL_BEGAN,
     payload: {
@@ -30,7 +39,7 @@ export const saveProfile = (profile, history) => async (dispatch) => {
       onStart: PROFILE_REQUESTED,
       onSuccess: SAVE_PROFILE_SUCCESS,
       onError: PROFILE_ERROR,
-      afterSuccess: () => history.push("/me"),
+      afterSuccess,
     },
   });
 };

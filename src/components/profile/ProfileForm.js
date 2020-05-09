@@ -1,7 +1,13 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { saveProfile } from "../../state/actions/profileActions";
 import { parseDate } from "../../helpers/datamapper";
+import {
+  cellStatusOptions,
+  churchStatusOptions,
+  genderOptions,
+  typeOptions,
+} from "../../helpers/helpers";
 
 import Joi from "@hapi/joi";
 import Form from "../shared/Form";
@@ -21,70 +27,6 @@ class ProfileForm extends Form {
     errors: {},
   };
 
-  componentDidMount() {
-    if (this.props.profile) {
-      const { data } = this.props.profile;
-      if (data) {
-        const {
-          address,
-          birthdate,
-          cellStatus,
-          churchStatus,
-          gender,
-          leader,
-          type,
-        } = data;
-        this.setState({
-          data: {
-            address,
-            birthdate: parseDate(birthdate),
-            cellStatus,
-            churchStatus,
-            gender,
-            type,
-            leader: leader._id,
-          },
-        });
-      }
-    }
-  }
-
-  cellStatusOptions = [
-    { id: 1, label: "1st Timer", value: "1T" },
-    { id: 2, label: "2nd Timer", value: "2T" },
-    { id: 3, label: "3rd Timer", value: "3T" },
-    { id: 4, label: "4th Timer", value: "4T" },
-    { id: 5, label: "Regular", value: "R" },
-  ];
-
-  churchStatusOptions = [
-    { id: 1, label: "Not yet attended church", value: "NACS" },
-    { id: 2, label: "Attended church", value: "ACS" },
-    { id: 3, label: "Consistently attending church", value: "CICS" },
-  ];
-
-  typeOptions = [
-    { id: 1, label: "Student", value: "student" },
-    { id: 2, label: "Professional", value: "professional" },
-    { id: 3, label: "Parent", value: "parent" },
-  ];
-
-  genderOptions = [
-    { id: 1, label: "Male", value: "male" },
-    { id: 2, label: "Female", value: "female" },
-  ];
-
-  getPrimaryLeaders = () => {
-    const { primaryLeaders, user } = this.props;
-    if (primaryLeaders) {
-      return primaryLeaders
-        .filter((p) => p._id !== user._id)
-        .map((item) => {
-          return { id: item._id, label: item.name, value: item._id };
-        });
-    }
-  };
-
   schema = Joi.object({
     address: Joi.string().required().label("Address"),
     birthdate: Joi.string()
@@ -100,46 +42,106 @@ class ProfileForm extends Form {
     type: Joi.string().label("Type"),
   });
 
+  mapProfileToState() {
+    const { data } = this.props.profile;
+    if (!data) return null;
+    const {
+      address,
+      birthdate,
+      cellStatus,
+      churchStatus,
+      gender,
+      leader,
+      type,
+    } = data;
+    return {
+      address,
+      birthdate: parseDate(birthdate),
+      cellStatus,
+      churchStatus,
+      gender,
+      leader: leader._id,
+      type,
+    };
+  }
+
+  componentDidMount() {
+    if (this.hasProfile) {
+      const data = this.mapProfileToState();
+      if (!data) return;
+      this.setState({ data });
+    }
+  }
+
+  getPrimaryLeaders = () => {
+    const { primaryLeaders, user } = this.props;
+    if (primaryLeaders) {
+      return primaryLeaders
+        .filter((p) => p._id !== user._id)
+        .map((item) => {
+          return { id: item._id, label: item.name, value: item._id };
+        });
+    }
+  };
+
+  hasProfile = () => {
+    const { profile } = this.props;
+    if (!profile) return false;
+    if (!profile.data) return false;
+    return true;
+  };
+
   doSubmit() {
-    this.props.saveProfile(this.state.data, this.props.history);
+    this.props.saveProfile(
+      this.state.data,
+      this.props.history,
+      this.hasProfile
+    );
   }
 
   render() {
     return (
-      <div className="app-form-page">
+      <Fragment>
         {this.props.loading && <Spinner />}
-        <form onSubmit={this.handleSubmit}>
-          <h2>Create Profile</h2>
-          {this.renderInput("address", "Address")}
-          {this.renderInput("birthdate", "Birthdate", "text", "MM/DD/YYYY")}
-          {this.renderSelect("leader", "Cell Leader", this.getPrimaryLeaders())}
-          <div className="row">
-            <div className="col-6 pr-1">
-              {this.renderSelect(
-                "cellStatus",
-                "Cell Status",
-                this.cellStatusOptions
-              )}
+
+        <div className="app-form-page">
+          <form onSubmit={this.handleSubmit}>
+            <h2>Create Profile</h2>
+            {this.renderInput("address", "Address")}
+            {this.renderInput("birthdate", "Birthdate", "text", "MM/DD/YYYY")}
+            {this.renderSelect(
+              "leader",
+              "Cell Leader",
+              this.getPrimaryLeaders()
+            )}
+            <div className="row">
+              <div className="col-6 pr-1">
+                {this.renderSelect(
+                  "cellStatus",
+                  "Cell Status",
+                  cellStatusOptions
+                )}
+              </div>
+              <div className="col-6 pl-1">
+                {this.renderSelect(
+                  "churchStatus",
+                  "Church Status",
+                  churchStatusOptions
+                )}
+              </div>
             </div>
-            <div className="col-6 pl-1">
-              {this.renderSelect(
-                "churchStatus",
-                "Church Status",
-                this.churchStatusOptions
-              )}
+            <div className="row">
+              <div className="col-6 pr-1">
+                {this.renderRadioGroup("type", "Type", typeOptions)}
+              </div>
+              <div className="col-6 pl-1">
+                {this.renderRadioGroup("gender", "Gender", genderOptions)}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-6 pr-1">
-              {this.renderRadioGroup("type", "Type", this.typeOptions)}
-            </div>
-            <div className="col-6 pl-1">
-              {this.renderRadioGroup("gender", "Gender", this.genderOptions)}
-            </div>
-          </div>
-          {this.renderButton("Save Profile")}
-        </form>
-      </div>
+            {this.renderButton("Save Profile")}
+          </form>
+        </div>
+      </Fragment>
     );
   }
 }

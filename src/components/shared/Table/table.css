@@ -1,0 +1,26 @@
+.table {
+  width: 100%;
+  background-color: inherit;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead {
+  box-sizing: border-box;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+th {
+  text-align: inherit;
+}
+.table th,
+.table td {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  vertical-align: center;
+}

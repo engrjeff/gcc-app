@@ -17,6 +17,8 @@ import Main from "./components/main/Main";
 import RegisterForm from "./components/forms/RegisterForm";
 import LoginForm from "./components/forms/LoginForm";
 import NotFound from "./components/shared/NotFound";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
+import Alert from "./components/shared/Alert";
 
 const token = localStorage.getItem("auth-token");
 if (token) {
@@ -30,13 +32,14 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
+        <Alert />
         <main>
           <Navbar />
           <div className="app-content">
             <Switch>
               <Route path="/register" component={RegisterForm} />
               <Route path="/login" component={LoginForm} />
-              <Route path="/me" component={Main} />
+              <ProtectedRoute path="/me" component={Main} />
               <Route path="/home" component={Home} />
               <Route path="/not-found" component={NotFound} />
               <Redirect from="/" to="/home" exact />
